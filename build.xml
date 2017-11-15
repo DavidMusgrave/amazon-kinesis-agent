@@ -13,10 +13,15 @@
     <property name="build.dependencies" location="dependencies" />
 
     <path id="classpath">
-        <fileset dir="${build.dependencies}" includes="**/*.jar" />
-        <fileset dir="/usr/share/java" includes="**/*.jar" />
+        <fileset dir="${build.dependencies}">
+			<include name="*.jar"/>
+		</fileset>
     </path>
-
+	
+	<manifestclasspath property="lib.list" jarfile="${build.lib}/${agent.package.name}-${agent.version}.jar">
+		<classpath refid="classpath" />
+	</manifestclasspath>
+	
     <target name="get-java-version">
       <condition property="current.java.version">
         <or>
@@ -32,7 +37,7 @@
     <target name="init">
         <mkdir dir="${build.root}" />
     </target>
-
+	
     <target name="compile" depends="check-java-version, init">
         <mkdir dir="${build.private}" />
         <javac source="1.7" target="1.7" includeantruntime="false" classpathref="classpath" srcdir="${src.dir}" destdir="${build.private}" />
@@ -47,6 +52,7 @@
         <jar jarfile="${build.lib}/${agent.package.name}-${agent.version}.jar" basedir="${build.private}">
             <manifest>
                 <attribute name="Main-Class" value="com.amazon.kinesis.streaming.agent.Agent" />
+				<attribute name="Class-Path" value=". ${lib.list}"/>
             </manifest>
         </jar>
     </target>

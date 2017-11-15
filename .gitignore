@@ -24,3 +24,7 @@ ant_build
 dependencies
 *.swp
 *.swo
+
+#
+nssm
+*.zip

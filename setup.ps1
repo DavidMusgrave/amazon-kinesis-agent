@@ -46,6 +46,9 @@ function Test-IsAdmin
 }
 function Assert-Runtime
 {
+    # DM - bypass this test for now..
+    return $true
+
     # only tested on windows 10 so far
     [array]$supportedPlatforms = @("win32nt")
     if (!($supportedPlatforms -icontains $PSVersionTable.Platform))
@@ -81,6 +84,22 @@ function Get-SetupVariables
             }
         }
     }
+
+    # DM - bypassing this for now..
+    $retVal = [PSCustomObject]@{
+                "daemon_name" = "aws-kinesis-agent";
+                "agent_user_name" = "aws-kinesis-agent-user";
+                "bin_dir" = "/usr/bin";
+                "cron_dir" = "/etc/cron.d";
+                "config_dir" = "/etc/aws-kinesis";
+                "jar_dir" = "/usr/share/$($daemon_name)/lib";
+                "dependencies_dir" = "$($PSScriptRoot)\dependencies";
+                "log_dir" = "/var/log/$($daemon_name)";
+                "state_dir" = "/var/run/$($daemon_name)";
+                "agent_service" = "$($init_dir)/$($daemon_name)";
+            }
+
+
     return $retVal
 }
 function Get-JarDependencyList
@@ -194,7 +213,7 @@ function Get-Java
 {
     if (-not ($ENV:JAVA_HOME))
     {
-        choco install jdk8 -y
+        choco install jdk7 -y
         refreshenv
     }
 }
@@ -306,7 +325,7 @@ switch ($Action.ToLower())
 {
     "build" {build -SetupVariables $SetupVars -JarDependencies $JarDependencies}
     "install" {install -SetupVariables $SetupVars -JarDependencies $JarDependencies -NssmPath $nssmPath}
-    "uninstall" {uninstall -SetupVariables $SetupVars -JarDependencies $JarDependencies}
+    "uninstall" {uninstall -SetupVariables $SetupVars -JarDependencies $JarDependencies -NssmPath $nssmPath}
     default {Get-Usage}
 }
 #endregion
