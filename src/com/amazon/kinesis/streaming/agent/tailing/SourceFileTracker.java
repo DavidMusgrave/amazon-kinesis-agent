@@ -250,7 +250,7 @@ public class SourceFileTracker {
                 }
                 BasicFileAttributes newAttr = Files.readAttributes(currentOpenFile.getPath(), BasicFileAttributes.class);
                 // Check if the file ID changed
-                FileId newId = FileId.get(newAttr);
+                FileId newId = FileId.get(currentOpenFile.getPath());
                 if(!newId.equals(currentOpenFile.getId())) {
                     LOGGER.debug("ID for current file ({}) changed from {} to {}. Must refresh.", currentOpenFile.getPath(), currentOpenFile.getId(), newId);
                     return true;
@@ -432,7 +432,7 @@ public class SourceFileTracker {
         }
         TrackedFileList newPendingFiles = newSnapshot.subList(0, currentFileIndex);
         if(LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Updating pendig files:\n\tCurrent File Index: {}\n\tExisting pending:\n\t\t{}\n\tNew pending:\n\t\t{}",
+            LOGGER.trace("Updating pending files:\n\tCurrent File Index: {}\n\tExisting pending:\n\t\t{}\n\tNew pending:\n\t\t{}",
                     currentFileIndex,
                     pendingFiles == null || pendingFiles.isEmpty() ? "<none>" : Joiner.on("\n\t\t").join(pendingFiles),
                     newPendingFiles == null || newPendingFiles.isEmpty() ? "<none>" : Joiner.on("\n\t\t").join(newPendingFiles));

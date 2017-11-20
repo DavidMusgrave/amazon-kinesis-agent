@@ -18,6 +18,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import sun.nio.ch.FileKey;
+import org.apache.commons.lang3.SystemUtils;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -43,7 +48,22 @@ public class FileId {
                         + file);
         BasicFileAttributes attr = Files.readAttributes(file,
                 BasicFileAttributes.class);
-        return get(attr);
+        
+
+        // return get(attr);
+
+        FileId fileId;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            try (FileInputStream fis = new FileInputStream(file.toFile())) {
+                FileDescriptor fd = fis.getFD();
+                FileKey fileKey = FileKey.create(fd);
+                fileId = new FileId(fileKey.toString());
+            }
+        } else {
+            fileId = get(attr);
+        }
+
+        return fileId;
     }
 
     /**
@@ -55,7 +75,7 @@ public class FileId {
      * @return
      * @throws IOException
      */
-    public static FileId get(BasicFileAttributes attr) throws IOException {
+    private static FileId get(BasicFileAttributes attr) throws IOException {
         return new FileId(attr.fileKey().toString());
     }
 

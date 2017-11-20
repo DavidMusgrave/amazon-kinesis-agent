@@ -18,9 +18,11 @@
 		</fileset>
     </path>
 	
+	<!--
 	<manifestclasspath property="lib.list" jarfile="${build.lib}/${agent.package.name}-${agent.version}.jar">
 		<classpath refid="classpath" />
 	</manifestclasspath>
+	-->
 	
     <target name="get-java-version">
       <condition property="current.java.version">
@@ -52,7 +54,7 @@
         <jar jarfile="${build.lib}/${agent.package.name}-${agent.version}.jar" basedir="${build.private}">
             <manifest>
                 <attribute name="Main-Class" value="com.amazon.kinesis.streaming.agent.Agent" />
-				<attribute name="Class-Path" value=". ${lib.list}"/>
+				<!-- <attribute name="Class-Path" value=". ${lib.list}"/> -->
             </manifest>
         </jar>
     </target>

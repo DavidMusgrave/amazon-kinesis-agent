@@ -158,8 +158,9 @@ public final class PublishingQueue<R extends IRecord> implements IHeartbeatProvi
             if (checkPendingRecordsBeforeNewRecord(record, block)) {
                 if(LOGGER.isDebugEnabled()) {
                     // SANITYCHECK: TODO: Remove when done debugging.
-                    Preconditions.checkState(currentBuffer.sizeRecords() < flow.getMaxBufferSizeRecords());
-                    Preconditions.checkState(currentBuffer.sizeBytesWithOverhead() + record.lengthWithOverhead() <= flow.getMaxBufferSizeBytes());
+                    // DM - Removing for now..
+                    // Preconditions.checkState(currentBuffer.sizeRecords() < flow.getMaxBufferSizeRecords());
+                    // Preconditions.checkState(currentBuffer.sizeBytesWithOverhead() + record.lengthWithOverhead() <= flow.getMaxBufferSizeBytes());
                 }
                 // Add record
                 if (!record.shouldSkip()) {

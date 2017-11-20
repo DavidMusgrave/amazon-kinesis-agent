@@ -143,8 +143,15 @@ public class Logging {
                 // Log4j creates the fallback file even if no fallback happened.
                 // Clean it up here.
                 Path fallbackLog = Paths.get(CustomLog4jFallbackErrorHandler.getFallbackLogFile());
-                if (Files.exists(fallbackLog) && Files.size(fallbackLog) == 0)
-                    Files.delete(fallbackLog);
+                if (Files.exists(fallbackLog) && Files.size(fallbackLog) == 0) {
+                    try {
+                        Files.delete(fallbackLog);
+                    } catch (Exception e) {
+                        // DM - Does this need fixing?
+                        System.out.println("Permissions error - cannot delete " + fallbackLog);
+                        logger.debug("Permissions error - cannot delete " + fallbackLog);
+                    }
+                }
             }
             initialized = true;
         }
