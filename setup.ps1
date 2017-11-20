@@ -1,7 +1,7 @@
 param
 (
 	[Parameter(Mandatory=$true)]
-    [ValidateSet("build","install","uninstall")]
+    [ValidateSet("build","install","uninstall","installservice")]
 	[string]$Action
 )
 #region functions
@@ -258,7 +258,7 @@ function install
     build -SetupVariables $SetupVariables -JarDependencies $JarDependencies
 
     $jarPath = "$($PSScriptRoot)\ant_build\lib\AWSKinesisStreamingDataAgent-1.1.jar"
-    & $NssmPath "install" $SetupVariables.daemon_name "java" "-jar $($jarPath)"
+    & $NssmPath "install" $SetupVariables.daemon_name "java" "-cp ""$SetupVariables.dependencies_dir/*;$($jarPath)"" ""com.amazon.kinesis.streaming.agent.Agent"""
     #& $NssmPath "start" $SetupVariables.daemon_name
 }
 function uninstall
@@ -280,6 +280,18 @@ function uninstall
         $service | Stop-Service
         & $NssmPath "remove" "$($SetupVariables.daemon_name)" "confirm"
     }
+}
+function installservice
+{
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [PSCustomObject]$SetupVariables,
+        [Parameter(Mandatory=$true)]
+        [string]$NssmPath
+    )
+    $jarPath = "$($PSScriptRoot)\ant_build\lib\AWSKinesisStreamingDataAgent-1.1.jar"
+    & $NssmPath "install" $SetupVariables.daemon_name "java" "-cp ""$($SetupVariables.dependencies_dir)/*;$($jarPath)"" ""com.amazon.kinesis.streaming.agent.Agent"""
 }
 #endregion
 
@@ -326,6 +338,7 @@ switch ($Action.ToLower())
     "build" {build -SetupVariables $SetupVars -JarDependencies $JarDependencies}
     "install" {install -SetupVariables $SetupVars -JarDependencies $JarDependencies -NssmPath $nssmPath}
     "uninstall" {uninstall -SetupVariables $SetupVars -JarDependencies $JarDependencies -NssmPath $nssmPath}
+    "installservice" {installservice -SetupVariables $SetupVars -NssmPath $nssmPath}
     default {Get-Usage}
 }
 #endregion
