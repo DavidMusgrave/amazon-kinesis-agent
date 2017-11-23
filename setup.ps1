@@ -213,7 +213,7 @@ function Get-Java
 {
     if (-not ($ENV:JAVA_HOME))
     {
-        choco install jdk7 -y
+        choco install jdk8 -y
         refreshenv
     }
 }
